@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="jquery.js"></script>
+    <style type="text/css">
+        #lazyLoadImage{width:500px;margin: 0 auto;}
+        #lazyLoadImage img{ width:500px; height:300px; border:1px solid #CCCCCC; padding:3px; float:left; margin:10px; visibility:visible;opacity:0.00;filter:alpha(opacity=00);-moz-opacity:0.0;}
+       /* filter:alpha(opacity=00);是 ie的, -moz-opacity:0.0; 是ff的*/
+       /* 大概的思路就是创建个div 、然后滚动条事件绑定  检测显示的页面div是否在一个高度的条件内、在给图片的src赋值、*/
+    </style>
+</head>
+<body>
+<div id="lazyLoadImage">
+    <img pic="images/banner1.jpg" alt="" src="images/banner1.jpg"/>
+    <img pic="images/banner2.jpg" alt=" " src="images/banner1.jpg"/>
+    <img pic="images/banner3.jpg" alt="" src="images/banner1.jpg"/>
+    <img pic="images/banner4.jpg" alt="" src="images/banner1.jpg"/>
+    <img pic="images/banner5.jpg" alt="" src="images/banner1.jpg"/>
+    <img pic="images/nav1_17.png" alt="" src="images/banner1.jpg"/>
+    <img pic="images/nav1_23.png" alt="" src="images/banner1.jpg"/>
+    <img pic="images/nav1_24.png" alt="" src="images/banner1.jpg"/>
+    <img pic="images/nav1_25.png" alt="" src="images/banner1.jpg"/>
+    <img pic="images/nav1_26.png" alt="" src="images/banner1.jpg"/>
+
+</div>
+<script>
+    function imgLazyLoad(){//扫描需要加载的div
+        $.each($("#lazyLoadImage img"),function(i,o){
+            //获取窗口高
+            var windowHeight=$(window).height();
+            //获取滚动条
+            var scrollTop=$(document).scrollTop();
+            windowHeight=windowHeight; //可以设置滚动条在显示某个高度来lazyload   windowHeight=windowHeight/2; 比如在显示屏幕高度2分之1的时候加载
+
+            //先判断是否是加载完的图片 跳出
+            if($(o).attr("src")==$(o).attr("pic")){
+                return true;
+            }else if( $(o).offset().top<=(scrollTop+windowHeight)  && $(o).offset().top >= scrollTop ){//判断div是不是出在可见的位置
+                if($(o).attr("pic") != undefined || $(o).attr("pic") != "undefined" ){
+                    var ObjectSrc = $(o).attr("pic");
+                    //把pic的值赋给src值
+                    $(o).attr("src",ObjectSrc);
+                    //css属性改为可见
+                    $(o).css("visibility","visible");
+                    //渐变时间和渐变值
+                    $(o).fadeTo(1000,1.00);
+                }
+            }
+        });
+    }
+    $(function(){//页面第一次加载时
+        imgLazyLoad();//初始化
+        //判断浏览器
+        if($.browser.msie){
+            //IE浏览器
+            $(window).scroll(imgLazyLoad);//浏览器的兼容
+        }else {
+            //其他浏览器 ff chrome 测试通过
+            $(document).scroll(imgLazyLoad);//当滚动条滚动时,扫描需要加载的div
+        }
+
+        //$("body").scroll(imgLazyLoad);//浏览器的兼容   不清楚是哪款浏览器
+    });
+</script>
+
+</body>
+</html>
